@@ -1,4 +1,5 @@
 Copyright (c) 2023 Greg LAMY <greg@bytespin.net>
+
 This is a public project hosted on GitHub : https://github.com/ByteSpin/MessengerDedupeBundle
 
 This was originally developed as part of an ETL project.
