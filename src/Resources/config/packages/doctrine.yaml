@@ -1,0 +1,12 @@
+doctrine:
+    orm:
+        entity_managers:
+            default:
+                mappings:
+                    ByteSpin\MessengerDedupeBundle:
+                        is_bundle: false
+                        type: attribute
+                        dir: '%kernel.project_dir%/vendor/bytespin/messenger-dedupe-bundle/src/Entity'
+                        prefix: ByteSpin\MessengerDedupeBundle\Entity
+                        alias: ByteSpin\MessengerDedupeBundle
+
