@@ -22,7 +22,15 @@ Requirements
 Installation
 ------------
 
+First install the bundle:
+```
 composer require bytespin/messenger-dedupe-bundle
+```
+
+Then updates the database schema:
+```
+php bin/console doctrine:schema:update --force
+```
 
 # Message deduplication
 This feature avoids same messages (YOU decide what is same in this case) accumulation in the messenger_messages 
