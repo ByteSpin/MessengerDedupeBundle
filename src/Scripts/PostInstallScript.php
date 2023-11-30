@@ -63,12 +63,15 @@ class PostInstallScript
                 $config['doctrine']['orm']['entity_managers'][$selectedManager]['mappings']['ByteSpin\MessengerDedupeBundle'] = $bundleConfig;
             } else {
                 echo "ByteSpin Messenger Dedupe Bundle configuration already exists for the selected entity manager." . PHP_EOL;
+                self::updateBundlesFile($projectBasePath . '/config/bundles.php');
                 return;
             }
         }
         file_put_contents($doctrineConfigFile, Yaml::dump($config, 10, 4, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK));
 
         echo "Configuration successfully added." . PHP_EOL;
+        self::updateBundlesFile($projectBasePath . '/config/bundles.php');
+
     }
 
     private static function askForEntityManager($entityManagers)
@@ -81,5 +84,26 @@ class PostInstallScript
         $selected = (int) readline("Your choice (number): ");
         return $entityManagers[$selected] ?? $entityManagers[0];
     }
+
+    private static function updateBundlesFile($bundlesFilePath): void
+    {
+        if (!file_exists($bundlesFilePath)) {
+            echo "The bundles.php file does not exist." . PHP_EOL;
+            return;
+        }
+
+        $bundlesFileContent = file_get_contents($bundlesFilePath);
+        $newBundleLine = "ByteSpin\\MessengerDedupeBundle\\MessengerDedupeBundle::class => ['all' => true],";
+
+        if (!str_contains($bundlesFileContent, "ByteSpin\\MessengerDedupeBundle\\MessengerDedupeBundle::class")) {
+            $bundlesFileContent = str_replace('];', $newBundleLine . PHP_EOL . '];', $bundlesFileContent);
+            file_put_contents($bundlesFilePath, $bundlesFileContent);
+
+            echo "ByteSpin\\MessengerDedupeBundle has been added to bundles.php" . PHP_EOL;
+        } else {
+            echo "ByteSpin\\MessengerDedupeBundle is already in bundles.php" . PHP_EOL;
+        }
+    }
+
 }
 PostInstallScript::postInstall();
