@@ -13,26 +13,27 @@
 
 namespace ByteSpin\MessengerDedupeBundle\Middleware;
 
+use AllowDynamicProperties;
 use ByteSpin\MessengerDedupeBundle\Messenger\Stamp\HashStamp;
-use Doctrine\ORM\EntityManagerInterface;
 use ByteSpin\MessengerDedupeBundle\Entity\MessengerMessageHash;
 use ByteSpin\MessengerDedupeBundle\Repository\MessengerMessageHashRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Stamp\ReceivedStamp;
 use Symfony\Component\Messenger\Middleware\StackInterface;
 
-readonly class DeduplicationMiddleware implements MiddlewareInterface
+#[AllowDynamicProperties] class DeduplicationMiddleware implements MiddlewareInterface
 {
     public function __construct(
-        private MessengerMessageHashRepository $hashRepository,
-        private EntityManagerInterface $entityManager,
+        private readonly MessengerMessageHashRepository $hashRepository,
+        private readonly ManagerRegistry $managerRegistry,
     ) {
+        $this->entityManager = $this->managerRegistry->getManagerForClass(MessengerMessageHash::class);
     }
 
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
     {
-
         if ($envelope->last(ReceivedStamp::class)) {
             // If the message has a ReceivedStamp, it means it has been received from transport.
             // In this case, we skip any further processing in this middleware and pass the

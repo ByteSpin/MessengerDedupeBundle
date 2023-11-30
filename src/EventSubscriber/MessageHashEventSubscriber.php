@@ -13,18 +13,22 @@
 
 namespace ByteSpin\MessengerDedupeBundle\EventSubscriber;
 
+use AllowDynamicProperties;
+use ByteSpin\MessengerDedupeBundle\Entity\MessengerMessageHash;
 use ByteSpin\MessengerDedupeBundle\Messenger\Stamp\HashStamp;
 use Doctrine\ORM\EntityManagerInterface;
 use ByteSpin\MessengerDedupeBundle\Repository\MessengerMessageHashRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\WorkerMessageHandledEvent;
 
-readonly class MessageHashEventSubscriber implements EventSubscriberInterface
+#[AllowDynamicProperties] class MessageHashEventSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private MessengerMessageHashRepository $hashRepository,
-        private EntityManagerInterface $entityManager,
+        private readonly MessengerMessageHashRepository $hashRepository,
+        private readonly ManagerRegistry $managerRegistry,
     ) {
+        $this->entityManager = $this->managerRegistry->getManagerForClass(MessengerMessageHash::class);
     }
 
     public static function getSubscribedEvents(): array

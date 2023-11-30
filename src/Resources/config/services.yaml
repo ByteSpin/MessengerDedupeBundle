@@ -7,7 +7,7 @@ services:
             - { name: 'kernel.event_subscriber' }
         arguments:
             $hashRepository: '@ByteSpin\MessengerDedupeBundle\Repository\MessengerMessageHashRepository'
-            $entityManager: '@Doctrine\ORM\EntityManagerInterface'
+            $managerRegistry: '@Doctrine\Persistence\ManagerRegistry'
     ByteSpin\MessengerDedupeBundle\Processor\HashProcessor:
         class: ByteSpin\MessengerDedupeBundle\Processor\HashProcessor
     ByteSpin\MessengerDedupeBundle\Middleware\DeduplicationMiddleware:
@@ -16,7 +16,7 @@ services:
             - { name: 'messenger.middleware', bus: 'messenger.bus.default' }
         arguments:
             $hashRepository: '@ByteSpin\MessengerDedupeBundle\Repository\MessengerMessageHashRepository'
-            $entityManager: '@Doctrine\ORM\EntityManagerInterface'
+            $managerRegistry: '@Doctrine\Persistence\ManagerRegistry'
     ByteSpin\MessengerDedupeBundle\Command\ConfigureBundleCommand:
         tags:
             - { name: 'console.command', command: 'bytespin:configure-messenger-dedupe' }
