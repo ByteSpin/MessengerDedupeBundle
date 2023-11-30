@@ -40,7 +40,6 @@ class PostInstallScript
             echo "Creating entity manager for connection: $selectedConnection" . PHP_EOL;
             $config['doctrine']['orm']['entity_managers'][$selectedConnection] = [
                 'naming_strategy' => 'doctrine.orm.naming_strategy.underscore_number_aware',
-                'auto_mapping' => true,
                 'connection' => $selectedConnection,
                 'mappings' => [
                     'ByteSpin\\MessengerDedupeBundle' => [
