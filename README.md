@@ -53,6 +53,41 @@ To do this, follow these steps:
 
 Make sure to perform this step after you have installed the bundle using Composer, but before you use any of its features in your application.
 
+Configuration
+-------------
+
+You will have to configure the entity manager to be used with the ByteSpin\MessengerDedupeBundle entities.
+This has to be done once after installation.
+We provide a script to automatise this step ; please run :
+```shell
+bin/console bytespin:configure-messenger-dedupe
+```
+
+If you prefer to do this by yourself, add the following lines just within your entity manager 'mappings:' key in doctrine.yaml :
+
+```php
+// src/config/packages/doctrine.yaml
+doctrine:
+    dbal:
+    (...)
+    orm:
+    (...)
+        entity_managers:
+            your_entity_manager:
+            (...)
+                mappings:
+                  ByteSpin\MessengerDedupeBundle:
+                  is_bundle: false
+                  type: attribute
+                  dir: '%kernel.project_dir%/vendor/bytespin/messenger-dedupe-bundle/src/Entity'
+                  prefix: ByteSpin\MessengerDedupeBundle\Entity
+                  alias: MessengerDedupeBundle
+            
+    
+
+```
+
+
 # Message deduplication
 This feature avoids same messages (YOU decide what is same in this case) accumulation in the messenger_messages 
 table when Doctrine transport is used, with the help of a custom Middleware and Envelope Stamp.
