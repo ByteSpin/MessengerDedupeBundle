@@ -25,7 +25,8 @@
     "doctrine/doctrine-bundle": "^2.9",
     "doctrine/orm": "^2.14",
     "symfony/flex": "^2",
-    "symfony/framework-bundle": "6.3.*"
+    "symfony/framework-bundle": "6.3.*",
+    "ext-readline": "*"
   },
   "config": {
     "allow-plugins": {
@@ -36,6 +37,7 @@
   },
   "scripts": {
     "auto-scripts": {
+      "bytespin:configure-messenger-dedupe": "symfony-cmd",
       "cache:clear": "symfony-cmd",
       "assets:install %PUBLIC_DIR%": "symfony-cmd"
     }

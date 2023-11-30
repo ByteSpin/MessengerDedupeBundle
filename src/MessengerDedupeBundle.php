@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Config\FileLocator;
 
-class ByteSpinMessengerDedupeBundle extends Bundle
+class MessengerDedupeBundle extends Bundle
 {
     /**
      * @throws Exception
@@ -30,6 +30,5 @@ class ByteSpinMessengerDedupeBundle extends Bundle
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/Resources/config'));
         $loader->load('services.yaml');
-        $loader->load('packages/doctrine.yaml');
     }
 }
