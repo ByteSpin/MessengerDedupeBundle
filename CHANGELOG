@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.3] - 2023-11-30
+### Fixed
+- Remove the auto loaded doctrine configuration that was hard coded with the default entity manager
+
+### Added
+- Added a console command to configure the bundle (entity manager to be used with bundle entities)
+
+### Improved
+- Updated the `README.md` to include new mandatory configuration steps (manual or automatic)
+
 ## [1.0.2] - 2023-11-22
 ### Improved
 - Updated the `README.md` to include instructions for manual bundle registration in `bundles.php` for users not utilizing Symfony Flex.

@@ -37,7 +37,7 @@ php bin/console doctrine:schema:update --force
 Manual bundle registration
 --------------------------
 
-If you are not using Symfony Flex, you will need to manually register the bundle in your application.
+You will need to manually register the bundle in your application.
 
 To do this, follow these steps:
 
