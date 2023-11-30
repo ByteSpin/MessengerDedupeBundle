@@ -17,3 +17,6 @@ services:
         arguments:
             $hashRepository: '@ByteSpin\MessengerDedupeBundle\Repository\MessengerMessageHashRepository'
             $entityManager: '@Doctrine\ORM\EntityManagerInterface'
+    ByteSpin\MessengerDedupeBundle\Command\ConfigureBundleCommand:
+        tags:
+            - { name: 'console.command', command: 'bytespin:configure-messenger-dedupe' }
