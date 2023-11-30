@@ -1,8 +1,6 @@
 <?php
 namespace ByteSpin\MessengerDedupeBundle\Scripts;
 
-require __DIR__ . '/../../vendor/autoload.php';
-
 use Symfony\Component\Yaml\Yaml;
 
 class PostInstallScript
@@ -126,5 +124,3 @@ class PostInstallScript
         }
     }
 }
-
-PostInstallScript::postInstall();
