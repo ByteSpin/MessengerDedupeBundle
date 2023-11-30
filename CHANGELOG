@@ -1,0 +1,5 @@
+# Changelog
+
+## [1.0.2] - 2023-11-22
+### Improved
+- Updated the `README.md` to include instructions for manual bundle registration in `bundles.php` for users not utilizing Symfony Flex.

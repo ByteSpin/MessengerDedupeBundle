@@ -11,6 +11,8 @@ ByteSpin/MessengerDedupeBundle is a Symfony 6.3 bundle that tries to help managi
 > This project is still at alpha state and has not yet been fully tested outside its parent project.
 >
 > **Feel free to submit bug and/or pull requests!**
+>
+> You can check the [CHANGELOG](CHANGELOG) to see the latest improvements and fixes.
 
 Just keep in mind that I want to keep it as simple as possible!
 
@@ -31,6 +33,25 @@ Then updates the database schema:
 ```
 php bin/console doctrine:schema:update --force
 ```
+
+Manual bundle registration
+--------------------------
+
+If you are not using Symfony Flex, you will need to manually register the bundle in your application.
+
+To do this, follow these steps:
+
+1. Open the file `config/bundles.php` in your Symfony application.
+
+2. Add the following line to the array returned by this file:
+
+    ```php
+        ByteSpin\MessengerDedupeBundle\ByteSpinMessengerDedupeBundle::class => ['all' => true],
+    ```
+
+3. Save the file. Your bundle is now registered and ready to be used in your application.
+
+Make sure to perform this step after you have installed the bundle using Composer, but before you use any of its features in your application.
 
 # Message deduplication
 This feature avoids same messages (YOU decide what is same in this case) accumulation in the messenger_messages 
