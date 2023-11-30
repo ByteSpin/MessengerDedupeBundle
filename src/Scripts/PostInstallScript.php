@@ -1,6 +1,8 @@
 <?php
 namespace ByteSpin\MessengerDedupeBundle\Scripts;
+
 require __DIR__ . '/../../vendor/autoload.php';
+
 use Symfony\Component\Yaml\Yaml;
 
 class PostInstallScript
@@ -27,66 +29,85 @@ class PostInstallScript
 
         $config = Yaml::parseFile($doctrineConfigFile);
 
-        $bundleConfig = [
-            'is_bundle' => false,
-            'type' => 'attribute',
-            'dir' => '%kernel.project_dir%/vendor/bytespin/messenger-dedupe-bundle/src/Entity',
-            'prefix' => 'ByteSpin\MessengerDedupeBundle\Entity',
-            'alias' => 'ByteSpin\MessengerDedupeBundle'
-        ];
+        // Lire les connexions DBAL
+        if (empty($config['doctrine']['dbal']['connections'])) {
+            echo "No named DBAL connections found in doctrine.yaml. Using the default connection." . PHP_EOL;
+            $selectedConnection = 'default';
+        } else {
+            $connections = array_keys($config['doctrine']['dbal']['connections']);
+            $selectedConnection = self::askForDBALConnection($connections);
+        }
 
-        // Check if any entity managers are defined
-        if (empty($config['doctrine']['orm']['entity_managers'])) {
-            echo "No entity manager found in doctrine.yaml." . PHP_EOL;
-            echo "The script will create configuration for the default entity manager." . PHP_EOL;
-
-            $config['doctrine']['orm'] = [
-                'auto_generate_proxy_classes' => true,
-                'default_entity_manager' => 'default',
-                'entity_managers' => [
-                    'default' => [
-                        'naming_strategy' => 'doctrine.orm.naming_strategy.underscore_number_aware',
-                        'auto_mapping' => true,
-                        'connection' => 'default',
-                        'mappings' => [
-                            'ByteSpin\MessengerDedupeBundle' => $bundleConfig
-                        ]
+        if (!isset($config['doctrine']['orm']['entity_managers'][$selectedConnection])) {
+            echo "Creating entity manager for connection: $selectedConnection" . PHP_EOL;
+            $config['doctrine']['orm']['entity_managers'][$selectedConnection] = [
+                'naming_strategy' => 'doctrine.orm.naming_strategy.underscore_number_aware',
+                'auto_mapping' => true,
+                'connection' => $selectedConnection,
+                'mappings' => [
+                    'ByteSpin\\MessengerDedupeBundle' => [
+                        'is_bundle' => false,
+                        'type' => 'attribute',
+                        'dir' => '%kernel.project_dir%/vendor/bytespin/messenger-dedupe-bundle/src/Entity',
+                        'prefix' => 'ByteSpin\\MessengerDedupeBundle\\Entity',
+                        'alias' => 'ByteSpinMessengerDedupeBundle'
                     ]
                 ]
             ];
         } else {
-            $entityManagers = array_keys($config['doctrine']['orm']['entity_managers']);
-            $selectedManager = self::askForEntityManager($entityManagers);
+            echo "Modifying entity manager for connection: $selectedConnection" . PHP_EOL;
 
-            // Check if the bundle configuration already exists
-            if (!isset($config['doctrine']['orm']['entity_managers'][$selectedManager]['mappings']['ByteSpin\MessengerDedupeBundle'])) {
-                $config['doctrine']['orm']['entity_managers'][$selectedManager]['mappings']['ByteSpin\MessengerDedupeBundle'] = $bundleConfig;
+            if (!isset($config['doctrine']['orm']['entity_managers'][$selectedConnection]['mappings']['ByteSpin\\MessengerDedupeBundle'])) {
+                echo "Adding configuration for ByteSpin\MessengerDedupeBundle to the entity manager: $selectedConnection" . PHP_EOL;
+                $config['doctrine']['orm']['entity_managers'][$selectedConnection]['mappings']['ByteSpin\\MessengerDedupeBundle'] = [
+                    'is_bundle' => false,
+                    'type' => 'attribute',
+                    'dir' => '%kernel.project_dir%/vendor/bytespin/messenger-dedupe-bundle/src/Entity',
+                    'prefix' => 'ByteSpin\\MessengerDedupeBundle\\Entity',
+                    'alias' => 'ByteSpinMessengerDedupeBundle'
+                ];
             } else {
-                echo "ByteSpin Messenger Dedupe Bundle configuration already exists for the selected entity manager." . PHP_EOL;
+                echo "The configuration for ByteSpin\MessengerDedupeBundle already exists for the entity manager: $selectedConnection" . PHP_EOL;
                 self::updateBundlesFile($projectBasePath . '/config/bundles.php');
                 return;
             }
         }
+
+        echo "We are about to add or update the entity manager configuration for the ByteSpin Bundle in your doctrine.yaml file.".PHP_EOL;
+        echo "Do you want to proceed? (yes/no): ";
+        $handle = fopen("php://stdin", "r");
+        $line = fgets($handle);
+        if (trim(strtolower($line)) != 'yes') {
+            echo "Aborting script execution." . PHP_EOL;
+            return;
+        }
+
         file_put_contents($doctrineConfigFile, Yaml::dump($config, 10, 4, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK));
-
-        echo "Configuration successfully added." . PHP_EOL;
         self::updateBundlesFile($projectBasePath . '/config/bundles.php');
-
     }
 
-    private static function askForEntityManager($entityManagers)
+    private static function askForDBALConnection($connections)
     {
-        echo "Please choose an entity manager:" . PHP_EOL;
-        foreach ($entityManagers as $index => $manager) {
-            echo "[$index] $manager" . PHP_EOL;
+        echo "Please choose a DBAL connection:" . PHP_EOL;
+        foreach ($connections as $index => $connection) {
+            echo "[$index] $connection" . PHP_EOL;
         }
 
         $selected = (int) readline("Your choice (number): ");
-        return $entityManagers[$selected] ?? $entityManagers[0];
+        return $connections[$selected] ?? $connections[0];
     }
 
     private static function updateBundlesFile($bundlesFilePath): void
     {
+        echo "We are about to declare the ByteSpin Bundle in your bundles.php file if it's not already present.".PHP_EOL;
+        echo "Do you want to proceed? (yes/no): ";
+        $handle = fopen("php://stdin", "r");
+        $line = fgets($handle);
+        if (trim(strtolower($line)) != 'yes') {
+            echo "Aborting script execution." . PHP_EOL;
+            return;
+        }
+
         if (!file_exists($bundlesFilePath)) {
             echo "The bundles.php file does not exist." . PHP_EOL;
             return;
@@ -101,9 +122,9 @@ class PostInstallScript
 
             echo "ByteSpin\\MessengerDedupeBundle has been added to bundles.php" . PHP_EOL;
         } else {
-            echo "ByteSpin\\MessengerDedupeBundle is already in bundles.php" . PHP_EOL;
+            echo "ByteSpin\\MessengerDedupeBundle is already defined in bundles.php" . PHP_EOL;
         }
     }
-
 }
+
 PostInstallScript::postInstall();
