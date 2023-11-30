@@ -46,7 +46,7 @@ To do this, follow these steps:
 2. Add the following line to the array returned by this file:
 
     ```php
-        ByteSpin\MessengerDedupeBundle\ByteSpinMessengerDedupeBundle::class => ['all' => true],
+        ByteSpin\MessengerDedupeBundle\MessengerDedupeBundle::class => ['all' => true],
     ```
 
 3. Save the file. Your bundle is now registered and ready to be used in your application.

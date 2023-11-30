@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Config\FileLocator;
 
-class ByteSpinMessengerDedupeBundle extends Bundle
+class MessengerDedupeBundle extends Bundle
 {
     /**
      * @throws Exception

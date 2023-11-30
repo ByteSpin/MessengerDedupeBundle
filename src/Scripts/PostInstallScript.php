@@ -48,7 +48,7 @@ class PostInstallScript
                         'type' => 'attribute',
                         'dir' => '%kernel.project_dir%/vendor/bytespin/messenger-dedupe-bundle/src/Entity',
                         'prefix' => 'ByteSpin\\MessengerDedupeBundle\\Entity',
-                        'alias' => 'ByteSpinMessengerDedupeBundle'
+                        'alias' => 'MessengerDedupeBundle'
                     ]
                 ]
             ];
@@ -62,7 +62,7 @@ class PostInstallScript
                     'type' => 'attribute',
                     'dir' => '%kernel.project_dir%/vendor/bytespin/messenger-dedupe-bundle/src/Entity',
                     'prefix' => 'ByteSpin\\MessengerDedupeBundle\\Entity',
-                    'alias' => 'ByteSpinMessengerDedupeBundle'
+                    'alias' => 'MessengerDedupeBundle'
                 ];
             } else {
                 echo "The configuration for ByteSpin\MessengerDedupeBundle already exists for the entity manager: $selectedConnection" . PHP_EOL;
