@@ -8,7 +8,7 @@
 - Added a console command to configure the bundle (entity manager to be used with bundle entities)
 
 ### Improved
-- Updated the `README.md` to include new mandatory configuration steps (manual or automatic)
+- Updated the `README.md` to include new mandatory configuration steps (manual or automatic) and checks.
 
 ## [1.0.2] - 2023-11-22
 ### Improved
