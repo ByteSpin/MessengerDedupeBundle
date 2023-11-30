@@ -87,6 +87,20 @@ doctrine:
 
 ```
 
+> [!IMPORTANT]
+>
+> If your project contains entities mapped to multiple entity managers, be careful to not use the auto_mapping: true in your doctrine configuration.
+> 
+> This would prevent the getManagerForClass() function used in the bundle to get the correct entity manager to work properly!
+> 
+> This could happen if you decide to use the MessengerDedupeBundle with a shared messenger_messages table between multiple symfony projects.
+> 
+> In such case :
+> - Choose the correct entity manager when you run the configuration script, 
+> - Be sure to remove the 'auto_mapping: true' key from your doctrine.yaml (or set it to false),
+> - Be sure that ALL your entities are correctly mapped in the 'mappings:' sections of your doctrine.yaml
+
+
 
 # Message deduplication
 This feature avoids same messages (YOU decide what is same in this case) accumulation in the messenger_messages 
