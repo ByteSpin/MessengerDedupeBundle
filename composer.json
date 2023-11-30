@@ -36,10 +36,8 @@
     }
   },
   "scripts": {
-    "post-install-cmd": [
-      "ByteSpin\\MessengerDedupeBundle\\Scripts\\PostInstallScript::postInstall"
-    ],
     "auto-scripts": {
+      "bytespin:configure-messenger-dedupe": "symfony-cmd",
       "cache:clear": "symfony-cmd",
       "assets:install %PUBLIC_DIR%": "symfony-cmd"
     }
