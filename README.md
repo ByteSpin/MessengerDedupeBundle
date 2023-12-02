@@ -68,22 +68,22 @@ If you prefer to do this by yourself, add the following lines just within your e
 ```yaml
 # src/config/packages/doctrine.yaml
 doctrine:
-    dbal:
-    (...)
-    orm:
-    (...)
-        entity_managers:
-            your_entity_manager:
-            (...)
-                mappings:
-                  ByteSpin\MessengerDedupeBundle:
-                  is_bundle: false
-                  type: attribute
-                  dir: '%kernel.project_dir%/vendor/bytespin/messenger-dedupe-bundle/src/Entity'
-                  prefix: ByteSpin\MessengerDedupeBundle\Entity
-                  alias: MessengerDedupeBundle
-            
-    
+   dbal:
+   (...)
+   orm:
+   (...)
+   entity_managers:
+      your_entity_manager:
+      (...)
+      mappings:
+         ByteSpin\MessengerDedupeBundle:
+         is_bundle: false
+         type: attribute
+         dir: '%kernel.project_dir%/vendor/bytespin/messenger-dedupe-bundle/src/Entity'
+         prefix: ByteSpin\MessengerDedupeBundle\Entity
+         alias: MessengerDedupeBundle
+
+
 
 ```
 
@@ -128,12 +128,12 @@ framework:
 
 
 Don't forget to use the following class and initialize your message bus :
-```
+```php
 use ByteSpin\MessengerDedupeBundle\Messenger\Stamp\HashStamp;
 use ByteSpin\MessengerDedupeBundle\Processor\HashProcessor;
 ```
 
-```
+```php
 public function __construct(
         private MessageBusInterface $messageBus,
         private HashProcessor $hashProcessor,
@@ -144,13 +144,13 @@ public function __construct(
 When you need to dispatch a message, you first have to calculate a hash of what makes this message unique
 
 For example :
-```             
+```php
 $messageHash = $this->hashProcessor->makeHash('TheMessageType'.$TheFirstVariable.$TheSecondVariable);
 ```
 
 Then you can dispatch your message using the custom stamp :
 
-```
+```php
 $this->messageBus->dispatch(
                 new Envelope(
                     $message,
