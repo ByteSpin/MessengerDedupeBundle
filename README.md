@@ -128,12 +128,12 @@ framework:
 
 
 Don't forget to use the following class and initialize your message bus :
-```
+```php
 use ByteSpin\MessengerDedupeBundle\Messenger\Stamp\HashStamp;
 use ByteSpin\MessengerDedupeBundle\Processor\HashProcessor;
 ```
 
-```
+```php
 public function __construct(
         private MessageBusInterface $messageBus,
         private HashProcessor $hashProcessor,
@@ -144,13 +144,13 @@ public function __construct(
 When you need to dispatch a message, you first have to calculate a hash of what makes this message unique
 
 For example :
-```             
+```php
 $messageHash = $this->hashProcessor->makeHash('TheMessageType'.$TheFirstVariable.$TheSecondVariable);
 ```
 
 Then you can dispatch your message using the custom stamp :
 
-```
+```php
 $this->messageBus->dispatch(
                 new Envelope(
                     $message,
