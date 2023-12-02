@@ -65,8 +65,8 @@ bin/console bytespin:configure-messenger-dedupe
 
 If you prefer to do this by yourself, add the following lines just within your entity manager 'mappings:' key in doctrine.yaml :
 
-```php
-// src/config/packages/doctrine.yaml
+```yaml
+# src/config/packages/doctrine.yaml
 doctrine:
     dbal:
     (...)
@@ -90,27 +90,27 @@ doctrine:
 > [!IMPORTANT]
 >
 > If your project contains entities mapped to multiple entity managers, be careful to not use the auto_mapping: true in your doctrine configuration.
-> 
+>
 > This would prevent the getManagerForClass() function used in the bundle to get the correct entity manager to work properly!
-> 
+>
 > This could happen if you decide to use the MessengerDedupeBundle with a shared messenger_messages table between multiple symfony projects.
-> 
+>
 > In such case :
-> - Choose the correct entity manager when you run the configuration script, 
+> - Choose the correct entity manager when you run the configuration script,
 > - Be sure to remove the 'auto_mapping: true' key from your doctrine.yaml (or set it to false),
 > - Be sure that ALL your entities are correctly mapped in the 'mappings:' sections of your doctrine.yaml
 
 
 
 # Message deduplication
-This feature avoids same messages (YOU decide what is same in this case) accumulation in the messenger_messages 
+This feature avoids same messages (YOU decide what is same in this case) accumulation in the messenger_messages
 table when Doctrine transport is used, with the help of a custom Middleware and Envelope Stamp.
 
 Usage
 ------------
 You must enable the deduplication Middleware in your messenger.yaml config file :
-```
-//config/packages/messenger.yaml
+```yaml
+# config/packages/messenger.yaml
 
 framework:
     messenger:
@@ -121,9 +121,9 @@ framework:
 ```
 
 > [!NOTE]
-> 
-> The deduplication middleware must be executed before any other custom or standard symfony middleware 
-> 
+>
+> The deduplication middleware must be executed before any other custom or standard symfony middleware
+>
 > Put it first in the middleware list will do the trick
 
 
