@@ -65,8 +65,8 @@ bin/console bytespin:configure-messenger-dedupe
 
 If you prefer to do this by yourself, add the following lines just within your entity manager 'mappings:' key in doctrine.yaml :
 
-```php
-// src/config/packages/doctrine.yaml
+```yaml
+# src/config/packages/doctrine.yaml
 doctrine:
     dbal:
     (...)
@@ -109,8 +109,8 @@ table when Doctrine transport is used, with the help of a custom Middleware and 
 Usage
 ------------
 You must enable the deduplication Middleware in your messenger.yaml config file :
-```
-//config/packages/messenger.yaml
+```yaml
+# config/packages/messenger.yaml
 
 framework:
     messenger:
