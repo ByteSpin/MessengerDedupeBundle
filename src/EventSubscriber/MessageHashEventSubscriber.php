@@ -16,7 +16,6 @@ namespace ByteSpin\MessengerDedupeBundle\EventSubscriber;
 use AllowDynamicProperties;
 use ByteSpin\MessengerDedupeBundle\Entity\MessengerMessageHash;
 use ByteSpin\MessengerDedupeBundle\Messenger\Stamp\HashStamp;
-use Doctrine\ORM\EntityManagerInterface;
 use ByteSpin\MessengerDedupeBundle\Repository\MessengerMessageHashRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

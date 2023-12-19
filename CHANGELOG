@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.4] - 2023-12-19
+### Removed
+- Remove useless sensio framework extra dependency
+
 ## [1.0.3] - 2023-11-30
 ### Fixed
 - Remove the auto loaded doctrine configuration that was hard coded with the default entity manager
