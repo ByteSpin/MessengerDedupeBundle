@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.5] - 2024-01-03
+### Fixed
+- remove hash in case of message failure
+
 ## [1.0.4] - 2023-12-19
 ### Removed
 - Remove useless sensio framework extra dependency

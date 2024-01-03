@@ -19,6 +19,7 @@ use ByteSpin\MessengerDedupeBundle\Messenger\Stamp\HashStamp;
 use ByteSpin\MessengerDedupeBundle\Repository\MessengerMessageHashRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
 use Symfony\Component\Messenger\Event\WorkerMessageHandledEvent;
 
 #[AllowDynamicProperties] class MessageHashEventSubscriber implements EventSubscriberInterface
@@ -34,6 +35,7 @@ use Symfony\Component\Messenger\Event\WorkerMessageHandledEvent;
     {
         return [
             WorkerMessageHandledEvent::class => 'onMessageProcessed',
+            WorkerMessageFailedEvent::class => 'onMessageProcessed',
         ];
     }
 
