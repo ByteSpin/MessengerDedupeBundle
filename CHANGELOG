@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.6] - 2024-01-04
+### Added
+- Add a new RemoveDedupeHashHandler useful for remote hash removing from another application
+
 ## [1.0.5] - 2024-01-03
 ### Fixed
 - remove hash in case of message failure
