@@ -20,3 +20,11 @@ services:
     ByteSpin\MessengerDedupeBundle\Command\ConfigureBundleCommand:
         tags:
             - { name: 'console.command', command: 'bytespin:configure-messenger-dedupe' }
+    ByteSpin\MessengerDedupeBundle\MessageHandler\RemoveDedupeHashHandler:
+        autowire: true
+        autoconfigure: true
+        public: false
+        tags: [ 'controller.service_arguments' ]
+        arguments:
+            $hashRepository: '@ByteSpin\MessengerDedupeBundle\Repository\MessengerMessageHashRepository'
+            $managerRegistry: '@Doctrine\Persistence\ManagerRegistry'
