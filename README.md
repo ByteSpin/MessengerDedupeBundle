@@ -175,6 +175,93 @@ will first check that a similar hash does not exist :
 
 An event subscriber is in charge of removing the hash when the message has been processed
 
+Usage between multiple Symfony Applications
+-------------------------------------------
+
+In more complex architectures, a Symfony application (let's call it the Initiator App) can be used to generate some messages to
+some other remote Symfony applications (let's call them the Remote App).
+The DeduplicationHash is always stored on the Initiator App.
+The Remote App can consume the message but the DeduplicationHash is still stored on the Initiator App.
+
+With the help of a simple EventSubscriber listening to WorkerMessageHandledEvent and/or WorkerMessageFailedEvent, a specific RemoveDedupeHash
+message can be dispatched by the Remote App to the correct Initiator App transport/queue for the DedupeHash to be removed.
+
+In such case :
+- all the applications must use the ByteSpin/MessengerDedupeBundle to avoid MessageDecodingFailedException
+- all the applications must share a compatible messenger transports/queues configuration
+- the bundle provides a new InitiatorStamp to be included in generated messages.
+- the bundle also provides a new MessageHandler that listens to remotely generated RemoveDedupeHash messages
+
+For example, the Initiator App generates a message :
+```php
+(...)
+$this->messageBus->dispatch(
+                new Envelope(
+                    $message,
+                    [
+                        new TransportNamesStamp('remote_async_transport'),
+                        new HashStamp($messageHash),
+                        new InitiatorStamp('initiator_async_transport')
+                    ]
+                )
+            );
+```
+
+On the Remote App, a simple EventSubscriber is in charge of dispatching the RemoveHash message to the Initiator App :
+```php
+<?php
+
+use ByteSpin\MessengerDedupeBundle\Messenger\Stamp\HashStamp;
+use ByteSpin\MessengerDedupeBundle\Messenger\Stamp\InitiatorStamp;
+use ByteSpin\MessengerDedupeBundle\Model\RemoveDedupeHash;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
+use Symfony\Component\Messenger\Event\WorkerMessageHandledEvent;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
+
+readonly class MessageHandledOrFailedEventSubscriber implements EventSubscriberInterface
+{
+    public function __construct(
+        private MessageBusInterface $messageBus,
+
+    ) {
+    }
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            WorkerMessageHandledEvent::class => 'onMessageProcessed',
+            WorkerMessageFailedEvent::class => 'onMessageProcessed',
+        ];
+    }
+
+    public function onMessageProcessed(WorkerMessageHandledEvent $event): void
+    {
+        // remove hash on remote message initiator, only if a remote initiator has been defined
+        $envelope = $event->getEnvelope();
+        $hashStamp = $envelope->last(HashStamp::class);
+        $initiatorStamp = $envelope->last(InitiatorStamp::class);
+        if ($hashStamp && $initiatorStamp) {
+            $transportName = $initiatorStamp->getInitiator();
+            $hash = $hashStamp->getHash();
+            $this->messageBus->dispatch(
+                new Envelope(
+                    new RemoveDedupeHash(
+                        $hash
+                    ),
+                    [
+                        new TransportNamesStamp($transportName),
+                    ]
+                )
+            );
+
+        }
+    }
+}
+```
+
 
 Licence
 -------
