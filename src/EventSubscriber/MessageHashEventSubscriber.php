@@ -39,7 +39,7 @@ use Symfony\Component\Messenger\Event\WorkerMessageHandledEvent;
         ];
     }
 
-    public function onMessageProcessed(WorkerMessageHandledEvent $event): void
+    public function onMessageProcessed(WorkerMessageHandledEvent|WorkerMessageFailedEvent $event): void
     {
         $envelope = $event->getEnvelope();
         $hashStamp = $envelope->last(HashStamp::class);
