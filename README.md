@@ -178,21 +178,21 @@ An event subscriber is in charge of removing the hash when the message has been 
 Usage between multiple Symfony Applications
 -------------------------------------------
 
-In more complex architectures, a Symfony application (let's call it the Initiator App) can be used to generate some messages to
+In more complex architectures, a Symfony application (let's call it the Master App) can be used to generate some messages to
 some other remote Symfony applications (let's call them the Remote App).
-The DeduplicationHash is always stored on the Initiator App.
-The Remote App can consume the message but the DeduplicationHash is still stored on the Initiator App.
+The DeduplicationHash is always stored on the Master App.
+The Remote App can consume the message but the DeduplicationHash is still stored on the Master App.
 
 With the help of a simple EventSubscriber listening to WorkerMessageHandledEvent and/or WorkerMessageFailedEvent, a specific RemoveDedupeHash
-message can be dispatched by the Remote App to the correct Initiator App transport/queue for the DedupeHash to be removed.
+message can be dispatched by the Remote App to the correct Master App transport/queue for the DedupeHash to be removed.
 
 In such case :
 - all the applications must use the ByteSpin/MessengerDedupeBundle to avoid MessageDecodingFailedException
 - all the applications must share a compatible messenger transports/queues configuration
-- the bundle provides a new InitiatorStamp to be included in generated messages.
+- the bundle provides a new MasterStamp to be included in generated messages.
 - the bundle also provides a new MessageHandler that listens to remotely generated RemoveDedupeHash messages
 
-For example, the Initiator App generates a message :
+For example, the Master App generates a message :
 ```php
 (...)
 $this->messageBus->dispatch(
@@ -201,13 +201,13 @@ $this->messageBus->dispatch(
                     [
                         new TransportNamesStamp('remote_async_transport'),
                         new HashStamp($messageHash),
-                        new InitiatorStamp('initiator_async_transport')
+                        new MasterStamp('initiator_async_transport')
                     ]
                 )
             );
 ```
 
-On the Remote App, a simple EventSubscriber is in charge of dispatching the RemoveHash message to the Initiator App :
+On the Remote App, a simple EventSubscriber is in charge of dispatching the RemoveHash message to the Master App :
 ```php
 <?php
 
@@ -239,12 +239,12 @@ readonly class MessageHandledOrFailedEventSubscriber implements EventSubscriberI
 
     public function onMessageProcessed(WorkerMessageHandledEvent $event): void
     {
-        // remove hash on remote message initiator, only if a remote initiator has been defined
+        // remove hash on remote message initiator, only if a remote master has been defined
         $envelope = $event->getEnvelope();
         $hashStamp = $envelope->last(HashStamp::class);
-        $initiatorStamp = $envelope->last(InitiatorStamp::class);
-        if ($hashStamp && $initiatorStamp) {
-            $transportName = $initiatorStamp->getInitiator();
+        $masterStamp = $envelope->last(MasterStamp::class);
+        if ($hashStamp && $masterStamp) {
+            $transportName = $masterStamp->getMaster();
             $hash = $hashStamp->getHash();
             $this->messageBus->dispatch(
                 new Envelope(
